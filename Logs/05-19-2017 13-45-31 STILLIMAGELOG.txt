@@ -1,0 +1,27 @@
+05/19/2017 13:57:01,toggle,Still Image System Turned On
+05/19/2017 13:57:01,newText,Image will be saved as: image_20170519_T135701.jpg
+05/19/2017 13:57:01,newText,Confirmed photo request
+05/19/2017 13:57:01,newText,Total Picture Size: isabled
+
+05/19/2017 13:57:01,newText,Error retrieving picture size
+05/19/2017 13:57:01,newText,Current Received Position: 0
+05/19/2017 13:57:03,newText,try number: 1
+05/19/2017 13:57:03,newText,	resent last
+05/19/2017 13:57:03,newText,	pos @ 0
+05/19/2017 13:57:03,newText,	wordlength 10000
+05/19/2017 13:57:03,newText,Attempting to Sync - This should take approx. 2 sec
+05/19/2017 13:57:05,newText,System Match
+05/19/2017 13:57:05,newText,Current Received Position: 0
+05/19/2017 13:57:08,newText,Current Received Position: 6000
+05/19/2017 13:57:10,newText,Current Received Position: 12000
+05/19/2017 13:57:12,newText,Current Received Position: 18000
+05/19/2017 13:57:14,newText,Current Received Position: 24000
+05/19/2017 13:57:17,newText,Current Received Position: 30000
+05/19/2017 13:57:19,newText,Current Received Position: 36000
+05/19/2017 13:57:21,newText,Current Received Position: 42000
+05/19/2017 13:57:23,newText,Current Received Position: 48000
+05/19/2017 13:57:25,newText,Current Received Position: 54000
+05/19/2017 13:57:27,newPic,Images/image_20170519_T135701.jpg
+05/19/2017 13:57:27,newText,Image Saved
+05/19/2017 13:57:27,newText,Receive Time = 25.9300000668
+05/19/2017 13:57:27,toggle,Still Image System Turned Off
