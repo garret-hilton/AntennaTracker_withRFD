@@ -7,10 +7,12 @@ import MySQLdb
 import datetime
 import serial
 import threading
+import json
+from urllib2 import urlopen
 
 
 class GetIridium(QtCore.QObject):
-
+    print('Getting Iridium')
     # Received Signals
     start = pyqtSignal()
     setInterrupt = pyqtSignal()
@@ -30,6 +32,17 @@ class GetIridium(QtCore.QObject):
         self.mainWindow.iridiumNewLocation.connect(
             self.mainWindow.updateBalloonLocation)
 
+
+    def getApiData(imei):
+        url = "http://eclipse.rci.montana.edu/php/antennaTracker.php?imei=%s" % IMEI
+        try: 
+            # Timeout may be redundant, if port 80 is timing out, port 3306 will probably also
+            response = urlopen(url, timeout = 5)
+            data = response.read().decode("utf-8")
+            return json.loads(data)
+        except:
+            return {}
+
     def run(self):
         """ Gets tracking information from the Iridium satellite modem by taking the information from the SQL database at Montana State University """
 
@@ -38,34 +51,49 @@ class GetIridium(QtCore.QObject):
         connectAttempts = 0
         while(not self.iridiumInterrupt):
             # Connect to the SQL Database
+            apiConnected = False
             connected = False
-            while(not connected and not self.iridiumInterrupt):
+            while((not apiConnected or not connected) and not self.iridiumInterrupt):
                 QtGui.QApplication.processEvents()
                 if connectAttempts < 20:
                     try:
-                        # Connect to the database
-                        db_local = MySQLdb.connect(
-                            host=self.dbHost, user=self.dbUser, passwd=self.dbPass, db=self.dbName)
-                        # prepare a cursor object using cursor() method
-                        cursor = db_local.cursor()
-                        sql = "select gps_fltDate,gps_time,gps_lat,gps_long,gps_alt from gps where gps_IMEI = " + \
-                            self.IMEI + " order by pri_key DESC"
-                        cursor.execute(sql)
-                        connected = True
-                        if self.iridiumInterrupt:
-                            cursor.close()
-                            db_local.close()
+                        get_data = getApiData(IMEI)
+                        print(get_data)
+                        if get_data:
+                            dataMethod = "API"
+                            remoteTime = get_data['remoteTime']
+                            remoteHours = int(get_data['remoteHours'])
+                            remoteMinutes = int(get_data['remoteMinutes'])
+                            remoteSeconds = int(get_data['remoteSeconds']) + (60*remoteMinutes) + (3600*remoteHours)
+                            remoteLat = float(get_data['remoteLat'])
+                            remoteLon = float(get_data['remoteLon'])
+                            remoteAlt = float(get_data['remoteAlt'])
+                            print('system data received')
+                            apiConnected = True
+                        else:
+                            # Connect to the database
+                            db_local = MySQLdb.connect(
+                                host=self.dbHost, user=self.dbUser, passwd=self.dbPass, db=self.dbName)
+                            # prepare a cursor object using cursor() method
+                            cursor = db_local.cursor()
+                            sql = "select gps_fltDate,gps_time,gps_lat,gps_long,gps_alt from gps where gps_IMEI = " + \
+                                self.IMEI + " order by pri_key DESC"
+                            cursor.execute(sql)
                             connected = True
+                            if self.iridiumInterrupt:
+                                cursor.close()
+                                db_local.close()
+                                connected = True
                     except:
-                        print("Failed to connect to database, trying again")
+                        print("Failed to connect to API, trying again")
                         connectAttempts += 1
                 else:
-                    print("Failed to connect to database too many times")
+                    print("Failed to connect to API too many times")
                     self.interrupt()
                     self.mainWindow.noIridium.emit()
 
             if connected:
-                ### Fetch a single row using fetchone() method. ###
+                # Fetch a single row using fetchone() method. 
                 try:
                     results = cursor.fetchone()
                     if(results != prev):
@@ -83,7 +111,7 @@ class GetIridium(QtCore.QObject):
                         # (meters to feet conversion)
                         remoteAlt = float(results[4]) * 3.280839895
 
-                        ### Create a new location object ###
+                        # Create a new location object
                         try:
                             newLocation = BalloonUpdate(remoteTime, remoteSeconds, remoteLat, remoteLon, remoteAlt,
                                                         "Iridium", self.mainWindow.groundLat, self.mainWindow.groundLon, self.mainWindow.groundAlt)
