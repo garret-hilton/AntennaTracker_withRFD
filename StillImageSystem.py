@@ -30,8 +30,8 @@ class StillImageSystem(QtCore.QObject):
         self.mainWindow = MainWindow
 
         # Picture Qualities
-        self.picWidth = 200
-        self.picHeight = 100
+        self.picWidth = 650
+        self.picHeight = 450
         self.picSharpness = 0
         self.picBrightness = 50
         self.picContrast = 0
