@@ -30,8 +30,8 @@ class StillImageSystem(QtCore.QObject):
         self.mainWindow = MainWindow
 
         # Picture Qualities
-        self.picWidth = 200
-        self.picHeight = 100
+        self.picWidth = 650
+        self.picHeight = 450
         self.picSharpness = 0
         self.picBrightness = 50
         self.picContrast = 0
@@ -40,7 +40,7 @@ class StillImageSystem(QtCore.QObject):
 
         # Variable to determine spacing of checksum. Ex. wordlength = 1000 will
         # send one thousand bits before calculating and verifying checksum
-        self.wordlength = 10000
+        self.wordlength = 7000
         self.extension = ".jpg"
         # The starting display photo is the logo of the MnSGC
         self.displayPhotoPath = "Images/MnSGC_Logo_highRes.png"
@@ -622,7 +622,7 @@ class StillImageSystem(QtCore.QObject):
                               "newimage" + self.extension)
 
         ### Clean Up ###
-        self.wordlength = 10000			# Reset the wordlength to the original
+        self.wordlength = 7000			# Reset the wordlength to the original
         print "Image Saved"
         self.mainWindow.stillNewText.emit("Image Saved")
         sys.stdout.flush()
