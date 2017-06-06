@@ -4,7 +4,7 @@ from Antenna_Tracker_and_RFD_Controls_GUI import SerialDevice
 class ServoController:
 
     def __init__(self, servoController):
-        self.moveCommand = 0xFF
+        self.moveCommand = 0x84
         self.accelCommand = 0x89
         self.speedCommand = 0x87
 
@@ -23,19 +23,19 @@ class ServoController:
         # change the movement speed etc of ubiquity pan servo
         self.panChannel = 1
         self.panAccel = 1
-        self.panSpeed = 3
+        self.panSpeed = 1
 
         self.rfdpanChannel = 3
         self.rfdpanAccel = 1
-        self.rfdpanSpeed = 3
+        self.rfdpanSpeed = 1
 
         # Shouldn't need to change these unless you change to some exotic
         # servos
-        self.servoMin = 0
-        self.servoMax = 254
+        self.servoMin = 3600
+        self.servoMax = 8400
 
         # Memory for last position (To account for backlash)
-        self.previousPan = 127
+        self.previousPan = 6000
         self.servoController = servoController
 
         # Set the acceleration and speed of the servos
@@ -124,6 +124,8 @@ class ServoController:
         """ Takes a single argument, moves the tilt servo to the position specified by the argument """
 
         try:
+
+            '''modify upper and lower tilt angle limits'''
 
             ### Move the tilt servo ###
             if position < 71:		  # 80 degrees upper limit
