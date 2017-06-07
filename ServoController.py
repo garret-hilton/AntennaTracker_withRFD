@@ -122,12 +122,16 @@ class ServoController:
 
     def moveTiltServo(self, position):
         """ Takes a single argument, moves the tilt servo to the position specified by the argument """
+        position = int(position)
+        msb = (position >> 7) & 0x7F
+        lsb = position & 0x7F
 
         try:
 
             '''modify upper and lower tilt angle limits'''
 
             ### Move the tilt servo ###
+            '''
             if position < 71:		  # 80 degrees upper limit
                 moveTilt = [self.moveCommand, self.tiltChannel, chr(71)]
                 moveRfdTilt = [self.moveCommand, self.rfdtiltChannel, chr(71)]
@@ -138,8 +142,12 @@ class ServoController:
                 moveTilt = [self.moveCommand, self.tiltChannel, chr(position)]
                 moveRfdTilt = [self.moveCommand,
                                self.rfdtiltChannel, chr(position)]
+            '''
+            moveTilt = [self.moveCommand, self.tiltChannel, lsb, msb]
+            moveRfdTilt = [self.moveCommand, self.tiltChannel, lsb, msb]
             self.servoController.write(moveTilt)
             self.servoController.write(moveRfdTilt)
+            print(moveTilt)
             print "\t\tMove Tilt: ", float(position)
 
         except Exception, e:
@@ -147,15 +155,20 @@ class ServoController:
 
     def movePanServo(self, position):
         """ Takes a single argument, moves the pan servo to the position specified by the argument """
+        position = int(position)
+        msb = (position >> 7) & 0x7F
+        lsb = position & 0x7F
 
         try:
             ### Move the pan servo ###
-            if self.previousPan > position:
-                position += 1
-            self.previousPan = position
-            movePan = [self.moveCommand, self.panChannel, chr(255 - position)]
+            #if self.previousPan > position:
+            #    position += 1
+            #self.previousPan = position
+
+            movePan = [self.moveCommand, self.panChannel, lsb, msb]
             moveRfdPan = [self.moveCommand,
-                          self.rfdpanChannel, chr(255 - position)]
+                          self.rfdpanChannel, lsb, msb]
+            print(movePan)
             self.servoController.write(movePan)
             self.servoController.write(moveRfdPan)
             print "\t\tMove Pan: ", float(position)
