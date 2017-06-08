@@ -205,14 +205,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.requestStatusButton.clicked.connect(self.requestDeviceStatus)
 
         # Still Image Control Button Links
-        self.mostRecentImageButton.clicked.connect(lambda: self.stillImageButtonPress('mostRecent'))
-        self.imageDataTxtButton.clicked.connect(lambda: self.stillImageButtonPress('selectImage'))
+        self.mostRecentImageButton.clicked.connect(
+            lambda: self.stillImageButtonPress('mostRecent'))
+        self.imageDataTxtButton.clicked.connect(
+            lambda: self.stillImageButtonPress('selectImage'))
         self.picDefaultSettingsButton.clicked.connect(self.picDefaultSettings)
-        self.picSendNewSettingsButton.clicked.connect(lambda: self.stillImageButtonPress('sendNewSettings'))
-        self.picGetSettingsButton.clicked.connect(lambda: self.stillImageButtonPress('getPicSettings'))
-        self.connectionTestButton.clicked.connect(lambda: self.stillImageButtonPress('timeSync'))
-        self.picHorizontalFlipButton.clicked.connect(lambda: self.stillImageButtonPress('HFlip'))
-        self.picVerticalFlipButton.clicked.connect(lambda: self.stillImageButtonPress('VFlip'))
+        self.picSendNewSettingsButton.clicked.connect(
+            lambda: self.stillImageButtonPress('sendNewSettings'))
+        self.picGetSettingsButton.clicked.connect(
+            lambda: self.stillImageButtonPress('getPicSettings'))
+        self.connectionTestButton.clicked.connect(
+            lambda: self.stillImageButtonPress('timeSync'))
+        self.picHorizontalFlipButton.clicked.connect(
+            lambda: self.stillImageButtonPress('HFlip'))
+        self.picVerticalFlipButton.clicked.connect(
+            lambda: self.stillImageButtonPress('VFlip'))
 
         # Make sure the allowed combination of auto tracking checkboxes are
         # enabled
@@ -949,7 +956,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if self.rfdListenOnline:
                 self.stillImageStall = True
                 self.rfdListenStop()
-            self.stillImageSystem.mostRecentImageStart.emit(self.requestedImageName.text())
+            self.stillImageSystem.mostRecentImageStart.emit(
+                self.requestedImageName.text())
 
         if arg == 'selectImage':
             self.stillImageStart()
