@@ -4,7 +4,7 @@ from Antenna_Tracker_and_RFD_Controls_GUI import SerialDevice
 class ServoController:
 
     def __init__(self, servoController):
-        self.moveCommand = 0xFF
+        self.moveCommand = 0x84
         self.accelCommand = 0x89
         self.speedCommand = 0x87
 
@@ -23,19 +23,19 @@ class ServoController:
         # change the movement speed etc of ubiquity pan servo
         self.panChannel = 1
         self.panAccel = 1
-        self.panSpeed = 3
+        self.panSpeed = 1
 
         self.rfdpanChannel = 3
         self.rfdpanAccel = 1
-        self.rfdpanSpeed = 3
+        self.rfdpanSpeed = 1
 
         # Shouldn't need to change these unless you change to some exotic
         # servos
-        self.servoMin = 0
-        self.servoMax = 254
+        self.servoMin = 3600
+        self.servoMax = 8400
 
         # Memory for last position (To account for backlash)
-        self.previousPan = 127
+        self.previousPan = 6000
         self.servoController = servoController
 
         # Set the acceleration and speed of the servos
@@ -122,10 +122,16 @@ class ServoController:
 
     def moveTiltServo(self, position):
         """ Takes a single argument, moves the tilt servo to the position specified by the argument """
+        position = int(position)
+        msb = (position >> 7) & 0x7F
+        lsb = position & 0x7F
 
         try:
 
+            '''modify upper and lower tilt angle limits'''
+
             ### Move the tilt servo ###
+            '''
             if position < 71:		  # 80 degrees upper limit
                 moveTilt = [self.moveCommand, self.tiltChannel, chr(71)]
                 moveRfdTilt = [self.moveCommand, self.rfdtiltChannel, chr(71)]
@@ -136,8 +142,12 @@ class ServoController:
                 moveTilt = [self.moveCommand, self.tiltChannel, chr(position)]
                 moveRfdTilt = [self.moveCommand,
                                self.rfdtiltChannel, chr(position)]
+            '''
+            moveTilt = [self.moveCommand, self.tiltChannel, lsb, msb]
+            moveRfdTilt = [self.moveCommand, self.tiltChannel, lsb, msb]
             self.servoController.write(moveTilt)
             self.servoController.write(moveRfdTilt)
+            print(moveTilt)
             print "\t\tMove Tilt: ", float(position)
 
         except Exception, e:
@@ -145,15 +155,20 @@ class ServoController:
 
     def movePanServo(self, position):
         """ Takes a single argument, moves the pan servo to the position specified by the argument """
+        position = int(position)
+        msb = (position >> 7) & 0x7F
+        lsb = position & 0x7F
 
         try:
             ### Move the pan servo ###
-            if self.previousPan > position:
-                position += 1
-            self.previousPan = position
-            movePan = [self.moveCommand, self.panChannel, chr(255 - position)]
+            #if self.previousPan > position:
+            #    position += 1
+            #self.previousPan = position
+
+            movePan = [self.moveCommand, self.panChannel, lsb, msb]
             moveRfdPan = [self.moveCommand,
-                          self.rfdpanChannel, chr(255 - position)]
+                          self.rfdpanChannel, lsb, msb]
+            print(movePan)
             self.servoController.write(movePan)
             self.servoController.write(moveRfdPan)
             print "\t\tMove Pan: ", float(position)

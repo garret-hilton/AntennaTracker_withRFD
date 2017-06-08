@@ -1698,8 +1698,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.servosAttached:
             try:
-                self.servoController.moveTiltServo(127)
-                self.servoController.movePanServo(127)
+                self.servoController.moveTiltServo(6002)
+                self.servoController.movePanServo(6002)
             except:
                 print("Error moving servos to center position")
 
@@ -1731,27 +1731,53 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # With new digital servos, can use map method as described here: http://arduino.cc/en/reference/map
         # Get the correct numerical value for the servo position by adjusting
         # based on offset, max and min
-        panTo = ((bearing - (self.centerBear - 168)) * (self.servoController.servoMax - self.servoController.servoMin) /
-                 ((self.centerBear + 168) - (self.centerBear - 168)) + self.servoController.servoMin) + (255 * self.panOffset / 360)
-        if panTo > 254:
-            panTo = 254
+        #panTo = ((bearing - (self.centerBear - 168)) * (self.servoController.servoMax - self.servoController.servoMin) /
+        #         ((self.centerBear + 168) - (self.centerBear - 168)) + self.servoController.servoMin) + (255 * self.panOffset / 360)
+
+        #panTo =(bearing - self.centerBear)-12
+        panTo = (bearing -self.centerBear)
+        panTo = 180-panTo
         if panTo < 0:
-            panTo = 0
+            panTo = panTo + 360
+        panTo = int((panTo*3.37 + 893.4)*4)
+
+        '''
+        if bearing == 0:
+            bearing = 180
+        if bearing<180:
+            bearing = 180 - bearing
+        if bearing>180:
+            bearing = 180 + (360-bearing)
+        if bearing<90:
+            bearing = 90
+        if bearing>270:
+            bearing = 270
+            '''
+
+
+        #panTo = ((bearing*3.37)+894)*4
+        if panTo > 8424:
+            panTo = 8424
+        if panTo < 3576:
+            panTo = 3576
         print "\tServo Degrees:"
         if self.servosAttached:
-            self.servoController.movePanServo(math.trunc(panTo))
+            self.servoController.movePanServo(panTo)
 
         # Get the correct numerical value for the servo position by adjusting
         # based on offset, max and min
-        tiltTo = (((0 - elevation) - self.servoController.tiltAngleMin) * (self.servoController.servoMax - self.servoController.servoMin) /
-                  (self.servoController.tiltAngleMax - self.servoController.tiltAngleMin) + self.servoController.servoMin) + (255 * (-self.tiltOffset) / 360)
-        print(tiltTo)
-        if tiltTo > 254:
-            tiltTo = 254		# Don't go over the max
-        if tiltTo < 0:
-            tiltTo = 0			# Don't go under the min
+        #tiltTo = (((0 - elevation) - self.servoController.tiltAngleMin) * (self.servoController.servoMax - self.servoController.servoMin) /
+        #          (self.servoController.tiltAngleMax - self.servoController.tiltAngleMin) + self.servoController.servoMin) + (255 * (-self.tiltOffset) / 360)
+        #print(tiltTo)
+        if elevation<180:
+            elevation = 180 - elevation
+        tiltTo = ((elevation*4.73)+648.6)*4
+        if tiltTo > 6000:
+            tiltTo = 6000		# Don't go over the max
+        if tiltTo < 4200:
+            tiltTo = 4200			# Don't go under the min
         if self.servosAttached:		# Move the servos to the new locations if they're attacheed
-            self.servoController.moveTiltServo(math.trunc(tiltTo))
+            self.servoController.moveTiltServo(tiltTo)
         if temp != 0:
             self.centerBear = temp
 
