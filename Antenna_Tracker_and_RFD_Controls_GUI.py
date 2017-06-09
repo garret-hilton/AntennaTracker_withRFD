@@ -1771,7 +1771,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #print(tiltTo)
         if elevation<180:
             elevation = 180 - elevation
-        tiltTo = ((elevation*4.73)+648.6)*4
+        tiltTo = int((elevation*2.9)+1000)*4
         if tiltTo > 6000:
             tiltTo = 6000		# Don't go over the max
         if tiltTo < 4200:
